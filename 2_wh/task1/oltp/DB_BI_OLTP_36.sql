@@ -1,0 +1,1 @@
+create database BI_OLTP_36;
