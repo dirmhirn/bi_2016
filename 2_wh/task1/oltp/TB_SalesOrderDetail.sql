@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `TB_SalesOrderDetail` (
   `SalesOrderDetailID` INT NOT NULL,
   `OrderQty` INT NOT NULL,
   `ProductID` INT NOT NULL,
-  `UnitPrice` DECIMAL(10,0) NOT NULL,
+  `UnitPrice` DECIMAL(10,4) NOT NULL,
   PRIMARY KEY (`SalesOrderID`, `SalesOrderDetailID`),
   INDEX `FK_Product_idx` (`ProductID` ASC),
   CONSTRAINT `FK_SalesOrder`

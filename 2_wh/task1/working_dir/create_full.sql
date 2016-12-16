@@ -65,9 +65,9 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `BI_OLTP_36`.`TB_ShipMethod` (
   `ShipMethodID` INT NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
-  `CostPerShipment` DECIMAL(10,0) NOT NULL,
-  `CostPerUnit` DECIMAL(10,0) NOT NULL,
-  `BulkyItemSurcharge` DECIMAL(10,0) NOT NULL,
+  `CostPerShipment` DECIMAL(10,4) NOT NULL,
+  `CostPerUnit` DECIMAL(10,4) NOT NULL,
+  `BulkyItemSurcharge` DECIMAL(10,4 NOT NULL,
   PRIMARY KEY (`ShipMethodID`))
 ENGINE = InnoDB;
 
@@ -139,10 +139,10 @@ CREATE TABLE IF NOT EXISTS `BI_OLTP_36`.`TB_Product` (
   `ProductID` INT NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
   `ProductNumber` VARCHAR(16) NOT NULL,
-  `StandardCost` DECIMAL(10,0) NOT NULL,
-  `ListPrice` DECIMAL(10,0) NOT NULL,
+  `StandardCost` DECIMAL(10,4) NOT NULL,
+  `ListPrice` DECIMAL(10,4) NOT NULL,
   `Size` VARCHAR(16),
-  `Weight` DECIMAL(10,0),
+  `Weight` DECIMAL(10,4),
   `ProductCategoryID` INT NOT NULL,
   `ProductModelName` VARCHAR(45) NULL,
   `SellStartDate` TIMESTAMP NOT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `BI_OLTP_36`.`TB_SalesOrderDetail` (
   `SalesOrderDetailID` INT NOT NULL,
   `OrderQty` INT NOT NULL,
   `ProductID` INT NOT NULL,
-  `UnitPrice` DECIMAL(10,0) NOT NULL,
+  `UnitPrice` DECIMAL(10,4) NOT NULL,
   PRIMARY KEY (`SalesOrderID`, `SalesOrderDetailID`),
   INDEX `FK_Product_idx` (`ProductID` ASC),
   CONSTRAINT `FK_SalesOrder`
