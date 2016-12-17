@@ -8,7 +8,7 @@
   <created_user>-</created_user>
   <created_date>2016&#x2f;12&#x2f;16 16&#x3a;36&#x3a;12.350</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;16 17&#x3a;59&#x3a;51.151</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;17 02&#x3a;00&#x3a;43.412</modified_date>
     <parameters>
     </parameters>
   <connection>
@@ -87,8 +87,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>512</xloc>
-      <yloc>224</yloc>
+      <xloc>496</xloc>
+      <yloc>352</yloc>
       </entry>
     <entry>
       <name>BL_Customer</name>
@@ -96,7 +96,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_Customer</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;Customer.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;Customer.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -104,7 +104,7 @@
       <lineterminated/>
       <replacedata>Y</replacedata>
       <ignorelines>0</ignorelines>
-      <listattribut>CustomerID, Title, FirstName, MiddleName, LastName, Suffix, EmailAddress, Phone, Gender, Birthdate</listattribut>
+      <listattribut/>
       <localinfile>Y</localinfile>
       <prorityvalue>0</prorityvalue>
       <addfiletoresult>N</addfiletoresult>
@@ -112,8 +112,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>16</yloc>
+      <xloc>144</xloc>
+      <yloc>144</yloc>
       </entry>
     <entry>
       <name>BL_Address</name>
@@ -121,7 +121,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_Address</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;Address.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;Address.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -137,8 +137,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>16</yloc>
+      <xloc>288</xloc>
+      <yloc>144</yloc>
       </entry>
     <entry>
       <name>BL_CustomerAddress</name>
@@ -146,7 +146,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_CustomerAddress</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;CustomerAddress.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;CustomerAddress.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -162,8 +162,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>448</xloc>
-      <yloc>16</yloc>
+      <xloc>432</xloc>
+      <yloc>144</yloc>
       </entry>
     <entry>
       <name>BL_ProductCategory</name>
@@ -171,7 +171,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_ProductCategory</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;ProductCategory.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;ProductCategory.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -187,8 +187,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>128</yloc>
+      <xloc>288</xloc>
+      <yloc>256</yloc>
       </entry>
     <entry>
       <name>BL_ShipMethod</name>
@@ -196,7 +196,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_ShipMethod</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;ShipMethod.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;ShipMethod.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -212,8 +212,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>448</xloc>
-      <yloc>128</yloc>
+      <xloc>432</xloc>
+      <yloc>256</yloc>
       </entry>
     <entry>
       <name>BL_Product</name>
@@ -221,7 +221,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_Product</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;Product.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;Product.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -237,8 +237,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>128</yloc>
+      <xloc>144</xloc>
+      <yloc>256</yloc>
       </entry>
     <entry>
       <name>BL_SalesOrderDetail</name>
@@ -246,7 +246,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_SalesOrderDetail</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;SalesOrderDetail.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;SalesOrderDetail.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -262,8 +262,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>224</yloc>
+      <xloc>336</xloc>
+      <yloc>352</yloc>
       </entry>
     <entry>
       <name>BL_SalesOrderHeader</name>
@@ -271,7 +271,7 @@
       <type>MYSQL_BULK_LOAD</type>
       <schemaname/>
       <tablename>TB_SalesOrderHeader</tablename>
-      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;csv&#x2f;SalesOrderHeader.csv</filename>
+      <filename>&#x24;&#x7b;root_csv&#x7d;csv&#x2f;SalesOrderHeader.csv</filename>
       <separator>&#x5c;t</separator>
       <enclosed/>
       <escaped/>
@@ -287,8 +287,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>224</yloc>
+      <xloc>144</xloc>
+      <yloc>352</yloc>
       </entry>
     <entry>
       <name>HL7 MLLP Acknowledge</name>
@@ -303,17 +303,28 @@
       <xloc>728</xloc>
       <yloc>420</yloc>
       </entry>
+    <entry>
+      <name>Set CSV root path</name>
+      <description/>
+      <type>SET_VARIABLES</type>
+      <replacevars>Y</replacevars>
+      <filename/>
+      <file_variable_type>CURRENT_JOB</file_variable_type>
+      <fields>
+        <field>
+          <variable_name>root_csv</variable_name>
+          <variable_value>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task1&#x2f;</variable_value>
+          <variable_type>CURRENT_JOB</variable_type>
+        </field>
+      </fields>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>144</xloc>
+      <yloc>16</yloc>
+      </entry>
   </entries>
   <hops>
-    <hop>
-      <from>START</from>
-      <to>BL_Customer</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
     <hop>
       <from>BL_Customer</from>
       <to>BL_Address</to>
@@ -380,6 +391,24 @@
     <hop>
       <from>BL_SalesOrderHeader</from>
       <to>BL_SalesOrderDetail</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>START</from>
+      <to>Set CSV root path</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Set CSV root path</from>
+      <to>BL_Customer</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
