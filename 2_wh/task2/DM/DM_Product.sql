@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `DM_Product` (
   INDEX `FK_SellStartDate_idx` (`SellStartDate` ASC),
   INDEX `FK_SellEndDate_idx` (`SellEndDate` ASC),
   INDEX `FK_DiscontinuedDate_idx` (`DiscontinuedDate` ASC),
-  CONSTRAINT `FK_SellStartDate`
+    CONSTRAINT `FK_SellStartDate`
     FOREIGN KEY (`SellStartDate`)
     REFERENCES `DM_Time` (`DateID`)
     ON DELETE NO ACTION
