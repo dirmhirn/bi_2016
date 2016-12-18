@@ -1,43 +1,16 @@
 <job>
-  <name>OLAP create</name>
+  <name>OLAP etl</name>
     <description/>
     <extended_description/>
     <job_version/>
     <job_status>0</job_status>
   <directory>&#x2f;</directory>
   <created_user>-</created_user>
-  <created_date>2016&#x2f;12&#x2f;17 01&#x3a;29&#x3a;04.593</created_date>
+  <created_date>2016&#x2f;12&#x2f;18 12&#x3a;21&#x3a;59.583</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;18 12&#x3a;56&#x3a;25.078</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;18 13&#x3a;24&#x3a;31.472</modified_date>
     <parameters>
     </parameters>
-  <connection>
-    <name>BI_OLAP_36</name>
-    <server>localhost</server>
-    <type>MYSQL</type>
-    <access>Native</access>
-    <database>BI_OLAP_36</database>
-    <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce10cc9da0ce</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <attributes>
-      <attribute><code>EXTRA_OPTION_MYSQL.defaultFetchSize</code><attribute>500</attribute></attribute>
-      <attribute><code>EXTRA_OPTION_MYSQL.useCursorFetch</code><attribute>true</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>3306</attribute></attribute>
-      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>Y</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>STREAM_RESULTS</code><attribute>Y</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
-      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
-    </attributes>
-  </connection>
     <slaveservers>
     </slaveservers>
 <job-log-table><connection/>
@@ -78,87 +51,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>32</xloc>
-      <yloc>48</yloc>
-      </entry>
-    <entry>
-      <name>SQL_Time</name>
-      <description/>
-      <type>SQL</type>
-      <sql/>
-      <useVariableSubstitution>F</useVariableSubstitution>
-      <sqlfromfile>T</sqlfromfile>
-      <sqlfilename>&#x24;&#x7b;root_path&#x7d;DM&#x2f;DM_Time.sql</sqlfilename>
-      <sendOneStatement>F</sendOneStatement>
-      <connection>BI_OLAP_36</connection>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>48</xloc>
-      <yloc>144</yloc>
-      </entry>
-    <entry>
-      <name>SQL_Customer</name>
-      <description/>
-      <type>SQL</type>
-      <sql/>
-      <useVariableSubstitution>F</useVariableSubstitution>
-      <sqlfromfile>T</sqlfromfile>
-      <sqlfilename>&#x24;&#x7b;root_path&#x7d;DM&#x2f;DM_Customer.sql</sqlfilename>
-      <sendOneStatement>F</sendOneStatement>
-      <connection>BI_OLAP_36</connection>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>144</yloc>
-      </entry>
-    <entry>
-      <name>SQL_Location</name>
-      <description/>
-      <type>SQL</type>
-      <sql/>
-      <useVariableSubstitution>F</useVariableSubstitution>
-      <sqlfromfile>T</sqlfromfile>
-      <sqlfilename>&#x24;&#x7b;root_path&#x7d;DM&#x2f;DM_Location.sql</sqlfilename>
-      <sendOneStatement>F</sendOneStatement>
-      <connection>BI_OLAP_36</connection>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>272</xloc>
-      <yloc>144</yloc>
-      </entry>
-    <entry>
-      <name>SQL_Product</name>
-      <description/>
-      <type>SQL</type>
-      <sql/>
-      <useVariableSubstitution>F</useVariableSubstitution>
-      <sqlfromfile>T</sqlfromfile>
-      <sqlfilename>&#x24;&#x7b;root_path&#x7d;DM&#x2f;DM_Product.sql</sqlfilename>
-      <sendOneStatement>F</sendOneStatement>
-      <connection>BI_OLAP_36</connection>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>384</xloc>
-      <yloc>144</yloc>
-      </entry>
-    <entry>
-      <name>SQL_FactSales</name>
-      <description/>
-      <type>SQL</type>
-      <sql/>
-      <useVariableSubstitution>F</useVariableSubstitution>
-      <sqlfromfile>T</sqlfromfile>
-      <sqlfilename>&#x24;&#x7b;root_path&#x7d;DM&#x2f;DM_FactSales.sql</sqlfilename>
-      <sendOneStatement>F</sendOneStatement>
-      <connection>BI_OLAP_36</connection>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>496</xloc>
-      <yloc>144</yloc>
+      <yloc>96</yloc>
       </entry>
     <entry>
       <name>Success</name>
@@ -167,11 +60,44 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>576</xloc>
-      <yloc>256</yloc>
+      <xloc>560</xloc>
+      <yloc>336</yloc>
       </entry>
     <entry>
-      <name>Set SQL root path</name>
+      <name>ETL_Location</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task2&#x2f;ETL&#x2f;TR_Location.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>176</xloc>
+      <yloc>192</yloc>
+      </entry>
+    <entry>
+      <name>Set transformation root path</name>
       <description/>
       <type>SET_VARIABLES</type>
       <replacevars>Y</replacevars>
@@ -188,48 +114,12 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>176</xloc>
-      <yloc>48</yloc>
+      <yloc>96</yloc>
       </entry>
   </entries>
   <hops>
     <hop>
-      <from>SQL_Time</from>
-      <to>SQL_Customer</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>SQL_Customer</from>
-      <to>SQL_Location</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>SQL_Location</from>
-      <to>SQL_Product</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>SQL_Product</from>
-      <to>SQL_FactSales</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>SQL_FactSales</from>
+      <from>ETL_Location</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -239,7 +129,7 @@
     </hop>
     <hop>
       <from>START</from>
-      <to>Set SQL root path</to>
+      <to>Set transformation root path</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -247,8 +137,8 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Set SQL root path</from>
-      <to>SQL_Time</to>
+      <from>Set transformation root path</from>
+      <to>ETL_Location</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
