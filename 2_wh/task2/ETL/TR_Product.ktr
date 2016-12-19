@@ -68,8 +68,8 @@
   <created_user>-</created_user>
   <created_date>2016&#x2f;12&#x2f;18 16&#x3a;47&#x3a;18.736</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;18 20&#x3a;35&#x3a;19.276</modified_date>
-    <key_for_session_key/>
+  <modified_date>2016&#x2f;12&#x2f;20 00&#x3a;02&#x3a;32.871</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -134,16 +134,14 @@
   <hop> <from>Table input TB_Product</from><to>Sort rows 2</to><enabled>Y</enabled> </hop>
   <hop> <from>Sort rows 2</from><to>Merge Join</to><enabled>Y</enabled> </hop>
   <hop> <from>Merge Join</from><to>IsBulkyItem</to><enabled>Y</enabled> </hop>
-  <hop> <from>IsBulkyItem</from><to>SellStartDate</to><enabled>Y</enabled> </hop>
-  <hop> <from>SellStartDate</from><to>Remove Temp Fields</to><enabled>Y</enabled> </hop>
-  <hop> <from>Remove Temp Fields</from><to>SellEndDate</to><enabled>Y</enabled> </hop>
   <hop> <from>DiscontinuedDate</from><to>Table output</to><enabled>Y</enabled> </hop>
-  <hop> <from>SellEndDate</from><to>Remove Temp Fields 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>Remove Temp Fields 2</from><to>DiscontinuedDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>IsBulkyItem</from><to>SellStartDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>SellStartDate</from><to>SellEndDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>SellEndDate</from><to>DiscontinuedDate</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Table input TB_Product</name>
-    <type>TableInput</type>
+    <name>DiscontinuedDate</name>
+    <type>SimpleMapping</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -152,24 +150,42 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <connection>BI_OLTP_36</connection>
-    <sql>SELECT&#xa;  ProductID&#xa;, Name&#xa;, ProductNumber&#xa;, StandardCost&#xa;, ListPrice&#xa;, Size&#xa;, Weight&#xa;, ProductCategoryID&#xa;, ProductModelName&#xa;, SellStartDate&#xa;, SellEndDate&#xa;, DiscontinuedDate&#xa;FROM TB_Product&#xa;</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
+    <specification_method>rep_name</specification_method>
+    <trans_object_id/>
+    <trans_name>TR_Time</trans_name>
+    <filename/>
+    <directory_path>&#x2f;ETL</directory_path>
+    <mappings>
+      <input>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>DiscontinuedDate</parent><child>Date</child></connector>
+    </mapping>      </input>
+      <output>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>DateID</parent><child>DiscontinuedDateID</child></connector>
+    </mapping>      </output>
+          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
+    </parameters>
+    </mappings>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>80</xloc>
-      <yloc>48</yloc>
+      <xloc>544</xloc>
+      <yloc>192</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Table input TB_ProductCategory</name>
-    <type>TableInput</type>
+    <name>IsBulkyItem</name>
+    <type>Formula</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -178,17 +194,17 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <connection>BI_OLTP_36</connection>
-    <sql>SELECT&#xa;  TB1.&#x60;ProductCategoryID&#x60;&#xa;, TB1.&#x60;Name&#x60; AS &#x60;ProductSubCategory&#x60;&#xa;, TB2.&#x60;Name&#x60; AS &#x60;ProductTopCategory&#x60;&#xa;FROM TB_ProductCategory AS TB1 &#xa;  LEFT JOIN TB_ProductCategory AS TB2 &#xa;  ON TB1.ParentProductCategoryID &#x3d; TB2.ProductCategoryID&#x3b;&#xa;</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
+       <formula><field_name>IsBulkyItem</field_name>
+<formula_string>IF&#x28;OR&#x28;&#xa;  &#x5b;ProductTopCategory&#x5d;&#x3d;&#x22;Bikes&#x22;&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;16&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;18&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;20&#x29;&#x3b;&#xa;1&#x3b;0&#x29;</formula_string>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field/>
+</formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>96</xloc>
-      <yloc>160</yloc>
+      <xloc>384</xloc>
+      <yloc>96</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -217,6 +233,96 @@
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>288</xloc>
       <yloc>96</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>SellEndDate</name>
+    <type>SimpleMapping</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <specification_method>rep_name</specification_method>
+    <trans_object_id/>
+    <trans_name>TR_Time</trans_name>
+    <filename/>
+    <directory_path>&#x2f;ETL</directory_path>
+    <mappings>
+      <input>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>SellEndDate</parent><child>Date</child></connector>
+    </mapping>      </input>
+      <output>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>DateID</parent><child>SellEndDateID</child></connector>
+    </mapping>      </output>
+          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
+    </parameters>
+    </mappings>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>336</xloc>
+      <yloc>224</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>SellStartDate</name>
+    <type>Mapping</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <specification_method>rep_name</specification_method>
+    <trans_object_id/>
+    <trans_name>TR_Time</trans_name>
+    <filename/>
+    <directory_path>&#x2f;ETL</directory_path>
+    <mappings>
+      <input>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>SellStartDate</parent><child>Date</child></connector>
+    </mapping>      </input>
+      <output>
+    <mapping>    <input_step/>
+    <output_step/>
+    <main_path>Y</main_path>
+    <rename_on_output>N</rename_on_output>
+    <description/>
+       <connector><parent>DateID</parent><child>SellStartDateID</child></connector>
+    </mapping>      </output>
+          <parameters>    <inherit_all_vars>N</inherit_all_vars>
+    </parameters>
+    </mappings>
+    <allow_multiple_input>N</allow_multiple_input>
+    <allow_multiple_output>N</allow_multiple_output>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>48</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -285,6 +391,58 @@
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>144</xloc>
       <yloc>32</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Table input TB_Product</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLTP_36</connection>
+    <sql>SELECT&#xa;  ProductID&#xa;, Name&#xa;, ProductNumber&#xa;, StandardCost&#xa;, ListPrice&#xa;, Size&#xa;, Weight&#xa;, ProductCategoryID&#xa;, ProductModelName&#xa;, SellStartDate&#xa;, SellEndDate&#xa;, DiscontinuedDate&#xa;FROM TB_Product&#xa;</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>80</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Table input TB_ProductCategory</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLTP_36</connection>
+    <sql>SELECT&#xa;  TB1.&#x60;ProductCategoryID&#x60;&#xa;, TB1.&#x60;Name&#x60; AS &#x60;ProductSubCategory&#x60;&#xa;, TB2.&#x60;Name&#x60; AS &#x60;ProductTopCategory&#x60;&#xa;FROM TB_ProductCategory AS TB1 &#xa;  LEFT JOIN TB_ProductCategory AS TB2 &#xa;  ON TB1.ParentProductCategoryID &#x3d; TB2.ProductCategoryID&#x3b;&#xa;</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>96</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -379,214 +537,6 @@
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>640</xloc>
       <yloc>96</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>IsBulkyItem</name>
-    <type>Formula</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-       <formula><field_name>IsBulkyItem</field_name>
-<formula_string>IF&#x28;OR&#x28;&#xa;  &#x5b;ProductTopCategory&#x5d;&#x3d;&#x22;Bikes&#x22;&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;16&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;18&#x3b;&#xa;  &#x5b;ProductCategoryID&#x5d;&#x3d;20&#x29;&#x3b;&#xa;1&#x3b;0&#x29;</formula_string>
-<value_type>Integer</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field/>
-</formula>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>384</xloc>
-      <yloc>96</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>SellStartDate</name>
-    <type>Mapping</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>SellStartDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>SellStartDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>N</inherit_all_vars>
-    </parameters>
-    </mappings>
-    <allow_multiple_input>N</allow_multiple_input>
-    <allow_multiple_output>N</allow_multiple_output>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>128</xloc>
-      <yloc>320</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>SellEndDate</name>
-    <type>SimpleMapping</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>SellEndDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>SellEndDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
-    </parameters>
-    </mappings>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>320</xloc>
-      <yloc>320</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Remove Temp Fields</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>        <select_unspecified>N</select_unspecified>
-      <remove>        <name>Date</name>
-      </remove>      <remove>        <name>MonthNumberOfYear</name>
-      </remove>      <remove>        <name>DayNumberOfMonth</name>
-      </remove>      <remove>        <name>CalendarYear</name>
-      </remove>    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>224</xloc>
-      <yloc>304</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>DiscontinuedDate</name>
-    <type>SimpleMapping</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DiscontinuedDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>DiscontinuedDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
-    </parameters>
-    </mappings>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>560</xloc>
-      <yloc>320</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Remove Temp Fields 2</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>        <select_unspecified>N</select_unspecified>
-      <remove>        <name>Date</name>
-      </remove>      <remove>        <name>DayNumberOfMonth</name>
-      </remove>      <remove>        <name>MonthNumberOfYear</name>
-      </remove>      <remove>        <name>CalendarYear</name>
-      </remove>    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>432</xloc>
-      <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
