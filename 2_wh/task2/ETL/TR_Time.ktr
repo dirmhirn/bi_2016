@@ -68,7 +68,7 @@
   <created_user>-</created_user>
   <created_date>2016&#x2f;12&#x2f;18 16&#x3a;48&#x3a;45.867</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;19 23&#x3a;49&#x3a;58.511</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;20 01&#x3a;13&#x3a;40.462</modified_date>
     <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
@@ -228,8 +228,8 @@
       <schema/>
       <table>DM_Time</table>
       <connection>BI_OLAP_36</connection>
-      <commit>1000</commit>
-      <cache_size>9999</cache_size>
+      <commit>100</commit>
+      <cache_size>-1</cache_size>
       <replace>Y</replace>
       <preloadCache>N</preloadCache>
       <crc>N</crc>
