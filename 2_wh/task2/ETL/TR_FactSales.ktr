@@ -68,7 +68,7 @@
   <created_user>-</created_user>
   <created_date>2016&#x2f;12&#x2f;18 16&#x3a;49&#x3a;19.283</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;20 01&#x3a;22&#x3a;37.782</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;20 21&#x3a;56&#x3a;12.538</modified_date>
     <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
@@ -130,13 +130,10 @@
   </connection>
   <order>
   <hop> <from>PrefixSol</from><to>Create SOL</to><enabled>Y</enabled> </hop>
-  <hop> <from>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</from><to>Calculator</to><enabled>Y</enabled> </hop>
-  <hop> <from>Calculator</from><to>OrderDate</to><enabled>N</enabled> </hop>
-  <hop> <from>ShipDate</from><to>PrefixSol</to><enabled>Y</enabled> </hop>
-  <hop> <from>OrderDate</from><to>ShipDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</from><to>IsLateShipment</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Calculator</name>
+    <name>IsLateShipment</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -165,122 +162,6 @@
       <xloc>192</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>BI_OLTP_36</connection>
-    <sql>SELECT&#xa;  TB1.SalesOrderID&#xa;, RevisionNumber&#xa;, OrderDate&#xa;, DueDate&#xa;, ShipDate&#xa;, &#x60;Status&#x60;&#xa;, SalesOrderNumber&#xa;, CustomerID&#xa;, ShipToAddressID&#xa;, BillToAddressID&#xa;, TB1.ShipMethodID&#xa;, TB2.OrderQty&#xa;, TB2.ProductID&#xa;, TB2.SalesOrderDetailID&#xa;, TB2.UnitPrice&#xa;, TB3.&#x60;Name&#x60; AS ShipmentMethod&#xa;, TB3.BulkyItemSurcharge&#xa;, TB3.CostPerShipment&#xa;, TB3.CostPerUnit&#xa;FROM &#x28;TB_SalesOrderHeader AS TB1 &#xa;  LEFT JOIN TB_SalesOrderDetail AS TB2 &#xa;    ON TB1.SalesOrderID&#x3d;TB2.SalesOrderID&#x29; &#xa;  LEFT JOIN TB_ShipMethod AS TB3 ON TB1.ShipMethodID&#x3d;TB3.ShipMethodID</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
-      <yloc>48</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Table output</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>BI_OLAP_36</connection>
-    <schema/>
-    <table>DM_FactSales</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>SalesOrderNumber</column_name>
-          <stream_name>SalesOrderNumber</stream_name>
-        </field>
-        <field>
-          <column_name>SalesOrderLineNumber</column_name>
-          <stream_name>SalesOrderLineNumber</stream_name>
-        </field>
-        <field>
-          <column_name>CustomerID</column_name>
-          <stream_name>CustomerID</stream_name>
-        </field>
-        <field>
-          <column_name>ProductID</column_name>
-          <stream_name>ProductID</stream_name>
-        </field>
-        <field>
-          <column_name>ShipToAddressID</column_name>
-          <stream_name>ShipToAddressID</stream_name>
-        </field>
-        <field>
-          <column_name>BillToAddressID</column_name>
-          <stream_name>BillToAddressID</stream_name>
-        </field>
-        <field>
-          <column_name>ShipmentMethod</column_name>
-          <stream_name>ShipmentMethod</stream_name>
-        </field>
-        <field>
-          <column_name>OrderQuantity</column_name>
-          <stream_name>OrderQty</stream_name>
-        </field>
-        <field>
-          <column_name>OrderStatus</column_name>
-          <stream_name>Status</stream_name>
-        </field>
-        <field>
-          <column_name>OrderDate</column_name>
-          <stream_name>OrderDateID</stream_name>
-        </field>
-        <field>
-          <column_name>ShipDate</column_name>
-          <stream_name>ShipDateID</stream_name>
-        </field>
-        <field>
-          <column_name>DueDate</column_name>
-          <stream_name>DueDateID</stream_name>
-        </field>
-        <field>
-          <column_name>IsLateShipment</column_name>
-          <stream_name>IsLateShipment</stream_name>
-        </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>528</xloc>
-      <yloc>288</yloc>
-      <draw>N</draw>
       </GUI>
     </step>
 
@@ -411,8 +292,8 @@
     </step>
 
   <step>
-    <name>OrderDate</name>
-    <type>SimpleMapping</type>
+    <name>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</name>
+    <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -421,42 +302,24 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>OrderDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>OrderDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
-    </parameters>
-    </mappings>
+    <connection>BI_OLTP_36</connection>
+    <sql>SELECT&#xa;  TB1.SalesOrderID&#xa;, RevisionNumber&#xa;, OrderDate&#xa;, DueDate&#xa;, ShipDate&#xa;, &#x60;Status&#x60;&#xa;, SalesOrderNumber&#xa;, CustomerID&#xa;, ShipToAddressID&#xa;, BillToAddressID&#xa;, TB1.ShipMethodID&#xa;, TB2.OrderQty&#xa;, TB2.ProductID&#xa;, TB2.SalesOrderDetailID&#xa;, TB2.UnitPrice&#xa;, TB3.&#x60;Name&#x60; AS ShipmentMethod&#xa;, TB3.BulkyItemSurcharge&#xa;, TB3.CostPerShipment&#xa;, TB3.CostPerUnit&#xa;FROM &#x28;TB_SalesOrderHeader AS TB1 &#xa;  LEFT JOIN TB_SalesOrderDetail AS TB2 &#xa;    ON TB1.SalesOrderID&#x3d;TB2.SalesOrderID&#x29; &#xa;  LEFT JOIN TB_ShipMethod AS TB3 ON TB1.ShipMethodID&#x3d;TB3.ShipMethodID</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>80</xloc>
-      <yloc>176</yloc>
+      <xloc>192</xloc>
+      <yloc>48</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>ShipDate</name>
-    <type>SimpleMapping</type>
+    <name>Table output</name>
+    <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -465,42 +328,88 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>ShipDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>ShipDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
-    </parameters>
-    </mappings>
+    <connection>BI_OLAP_36</connection>
+    <schema/>
+    <table>DM_FactSales</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>SalesOrderNumber</column_name>
+          <stream_name>SalesOrderNumber</stream_name>
+        </field>
+        <field>
+          <column_name>SalesOrderLineNumber</column_name>
+          <stream_name>SalesOrderLineNumber</stream_name>
+        </field>
+        <field>
+          <column_name>CustomerID</column_name>
+          <stream_name>CustomerID</stream_name>
+        </field>
+        <field>
+          <column_name>ProductID</column_name>
+          <stream_name>ProductID</stream_name>
+        </field>
+        <field>
+          <column_name>ShipToAddressID</column_name>
+          <stream_name>ShipToAddressID</stream_name>
+        </field>
+        <field>
+          <column_name>BillToAddressID</column_name>
+          <stream_name>BillToAddressID</stream_name>
+        </field>
+        <field>
+          <column_name>ShipmentMethod</column_name>
+          <stream_name>ShipmentMethod</stream_name>
+        </field>
+        <field>
+          <column_name>OrderQuantity</column_name>
+          <stream_name>OrderQty</stream_name>
+        </field>
+        <field>
+          <column_name>OrderStatus</column_name>
+          <stream_name>Status</stream_name>
+        </field>
+        <field>
+          <column_name>OrderDate</column_name>
+          <stream_name>OrderDateID</stream_name>
+        </field>
+        <field>
+          <column_name>ShipDate</column_name>
+          <stream_name>ShipDateID</stream_name>
+        </field>
+        <field>
+          <column_name>DueDate</column_name>
+          <stream_name>DueDateID</stream_name>
+        </field>
+        <field>
+          <column_name>IsLateShipment</column_name>
+          <stream_name>IsLateShipment</stream_name>
+        </field>
+    </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>80</xloc>
-      <yloc>352</yloc>
-      <draw>Y</draw>
+      <xloc>528</xloc>
+      <yloc>288</yloc>
+      <draw>N</draw>
       </GUI>
     </step>
 
   <step>
-    <name>DueDate</name>
-    <type>SimpleMapping</type>
+    <name>Database lookup</name>
+    <type>DBLookup</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -509,35 +418,21 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <specification_method>rep_name</specification_method>
-    <trans_object_id/>
-    <trans_name>TR_Time</trans_name>
-    <filename/>
-    <directory_path>&#x2f;ETL</directory_path>
-    <mappings>
-      <input>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>Y</rename_on_output>
-    <description/>
-       <connector><parent>DueDate</parent><child>Date</child></connector>
-    </mapping>      </input>
-      <output>
-    <mapping>    <input_step/>
-    <output_step/>
-    <main_path>Y</main_path>
-    <rename_on_output>N</rename_on_output>
-    <description/>
-       <connector><parent>DateID</parent><child>DueDateID</child></connector>
-    </mapping>      </output>
-          <parameters>    <inherit_all_vars>Y</inherit_all_vars>
-    </parameters>
-    </mappings>
+    <connection/>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>lookup table</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+    </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>368</xloc>
-      <yloc>176</yloc>
+      <xloc>80</xloc>
+      <yloc>224</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
