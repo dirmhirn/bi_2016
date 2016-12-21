@@ -8,6 +8,11 @@
     <trans_status>0</trans_status>
     <directory>&#x2f;ETL</directory>
     <parameters>
+        <parameter>
+            <name>root_path</name>
+            <default_value>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task2&#x2f;</default_value>
+            <description>Root path for CSV lookup files.</description>
+        </parameter>
     </parameters>
     <log>
 <trans-log-table><connection/>
@@ -68,7 +73,7 @@
   <created_user>-</created_user>
   <created_date>2016&#x2f;12&#x2f;18 16&#x3a;49&#x3a;19.283</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;12&#x2f;20 21&#x3a;56&#x3a;12.538</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;21 04&#x3a;34&#x3a;45.840</modified_date>
     <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
@@ -129,12 +134,35 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>PrefixSol</from><to>Create SOL</to><enabled>Y</enabled> </hop>
-  <hop> <from>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</from><to>IsLateShipment</to><enabled>Y</enabled> </hop>
+  <hop> <from>ShipmentDateDiff</from><to>IsLateShipment</to><enabled>Y</enabled> </hop>
+  <hop> <from>SolConstant</from><to>Create SOL</to><enabled>Y</enabled> </hop>
+  <hop> <from>SplitDates</from><to>LookupOrderDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>LookupOrderDate</from><to>LookupDueDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>LookupDueDate</from><to>LookupShipDate</to><enabled>Y</enabled> </hop>
+  <hop> <from>LookupShipDate</from><to>SolConstant</to><enabled>Y</enabled> </hop>
+  <hop> <from>IsLateShipment</from><to>SplitDates</to><enabled>Y</enabled> </hop>
+  <hop> <from>Create SOL</from><to>Clean SOL</to><enabled>Y</enabled> </hop>
+  <hop> <from>Table input SalesHeader &#x2b;Sales Detail &#x2b; Shipment</from><to>Sort rows</to><enabled>Y</enabled> </hop>
+  <hop> <from>DM_Product</from><to>Sort rows 2</to><enabled>Y</enabled> </hop>
+  <hop> <from>Sort rows 2</from><to>Merge Join</to><enabled>Y</enabled> </hop>
+  <hop> <from>Sort rows</from><to>Merge Join</to><enabled>Y</enabled> </hop>
+  <hop> <from>Merge Join</from><to>ShipmentDateDiff</to><enabled>Y</enabled> </hop>
+  <hop> <from>Clean SOL</from><to>OrderLineFreightCost</to><enabled>Y</enabled> </hop>
+  <hop> <from>OrderLineFreightCost</from><to>Init Discount</to><enabled>Y</enabled> </hop>
+  <hop> <from>OrderLineTotal</from><to>OrderLineProfit</to><enabled>Y</enabled> </hop>
+  <hop> <from>TaxAmount</from><to>Table output</to><enabled>Y</enabled> </hop>
+  <hop> <from>OrderLineProfit</from><to>lookup VAT</to><enabled>Y</enabled> </hop>
+  <hop> <from>lookup VAT</from><to>TaxAmount</to><enabled>Y</enabled> </hop>
+  <hop> <from>CSV VAT file input</from><to>lookup VAT</to><enabled>Y</enabled> </hop>
+  <hop> <from>Init Discount</from><to>ClothingLow</to><enabled>Y</enabled> </hop>
+  <hop> <from>ClothingLow</from><to>ClothingHigh</to><enabled>Y</enabled> </hop>
+  <hop> <from>ClothingHigh</from><to>AccessoriesLow</to><enabled>Y</enabled> </hop>
+  <hop> <from>AccessoriesLow</from><to>AccessoriesHigh</to><enabled>Y</enabled> </hop>
+  <hop> <from>AccessoriesHigh</from><to>OrderLineTotal</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>IsLateShipment</name>
-    <type>Calculator</type>
+    <name>Clean SOL</name>
+    <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -143,24 +171,25 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-       <calculation><field_name>IsLateShipment</field_name>
-<calc_type>DATE_DIFF_SEC</calc_type>
-<field_a>ShipDate</field_a>
-<field_b>DueDate</field_b>
-<field_c/>
-<value_type>Integer</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<remove>N</remove>
-<conversion_mask/>
-<decimal_symbol/>
-<grouping_symbol/>
-<currency_symbol/>
-</calculation>
+    <fields>
+      <field>
+        <in_stream_name>SalesOrderLineNumber</in_stream_name>
+        <out_stream_name/>
+        <trim_type>none</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>no</init_cap>
+        <mask_xml>none</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>espace</remove_special_characters>
+      </field>
+    </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
-      <yloc>128</yloc>
+      <xloc>352</xloc>
+      <yloc>560</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -209,8 +238,8 @@
     </file>
     <fields>
       <field>
-        <name>PrefixSol</name>
-        <type>None</type>
+        <name>SolConstant1</name>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>
@@ -222,7 +251,19 @@
       </field>
       <field>
         <name>SalesOrderID</name>
-        <type>None</type>
+        <type>Integer</type>
+        <format>0</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>SolConstant2</name>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>
@@ -234,7 +275,7 @@
       </field>
       <field>
         <name>SalesOrderDetailID</name>
-        <type>None</type>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>
@@ -252,14 +293,235 @@
     </ConcatFields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>272</xloc>
+      <xloc>480</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>IsLateShipment</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>IsLateShipment</field_name>
+<formula_string>IF&#x28;&#x5b;ShipmentDateDiff&#x5d;&#x3e;0&#x3b;1&#x3b;0&#x29;</formula_string>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field/>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>432</xloc>
       <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>PrefixSol</name>
+    <name>LookupDueDate</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLAP_36</connection>
+    <cache>Y</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>DM_Time</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>DueDateYear</name>
+        <field>CalendarYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>DueDateMonth</name>
+        <field>MonthNumberOfYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>DueDateDay</name>
+        <field>DayNumberOfMonth</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>DateID</name>
+        <rename>DueDateID</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>416</xloc>
+      <yloc>464</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>LookupOrderDate</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLAP_36</connection>
+    <cache>Y</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>DM_Time</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>OrderDateYear</name>
+        <field>CalendarYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>OrderDateMonth</name>
+        <field>MonthNumberOfYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>OrderDateDay</name>
+        <field>DayNumberOfMonth</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>DateID</name>
+        <rename>OrderDateID</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>272</xloc>
+      <yloc>464</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>LookupShipDate</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLAP_36</connection>
+    <cache>Y</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>DM_Time</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>ShipDateYear</name>
+        <field>CalendarYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ShipDateMonth</name>
+        <field>MonthNumberOfYear</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ShipDateDay</name>
+        <field>DayNumberOfMonth</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>DateID</name>
+        <rename>ShipDateID</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>576</xloc>
+      <yloc>464</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>ShipmentDateDiff</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>ShipmentDateDiff</field_name>
+<calc_type>DATE_DIFF</calc_type>
+<field_a>ShipDate</field_a>
+<field_b>DueDate</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>304</xloc>
+      <yloc>304</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>SolConstant</name>
     <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
@@ -271,7 +533,7 @@
            </partitioning>
     <fields>
       <field>
-        <name>PrefixSol</name>
+        <name>SolConstant1</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -282,11 +544,168 @@
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
       </field>
+      <field>
+        <name>SolConstant2</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>-</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>176</xloc>
-      <yloc>304</yloc>
+      <xloc>576</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>SplitDates</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>OrderDateDay</field_name>
+<calc_type>DAY_OF_MONTH</calc_type>
+<field_a>OrderDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>OrderDateMonth</field_name>
+<calc_type>MONTH_OF_DATE</calc_type>
+<field_a>OrderDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>OrderDateYear</field_name>
+<calc_type>YEAR_OF_DATE</calc_type>
+<field_a>OrderDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>DueDateDay</field_name>
+<calc_type>DAY_OF_MONTH</calc_type>
+<field_a>DueDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>DueDateMonth</field_name>
+<calc_type>MONTH_OF_DATE</calc_type>
+<field_a>DueDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>DueDateYear</field_name>
+<calc_type>YEAR_OF_DATE</calc_type>
+<field_a>DueDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>ShipDateDay</field_name>
+<calc_type>DAY_OF_MONTH</calc_type>
+<field_a>ShipDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>ShipDateMonth</field_name>
+<calc_type>MONTH_OF_DATE</calc_type>
+<field_a>ShipDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>ShipDateYear</field_name>
+<calc_type>YEAR_OF_DATE</calc_type>
+<field_a>ShipDate</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>160</xloc>
+      <yloc>464</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -303,7 +722,7 @@
            <schema_name/>
            </partitioning>
     <connection>BI_OLTP_36</connection>
-    <sql>SELECT&#xa;  TB1.SalesOrderID&#xa;, RevisionNumber&#xa;, OrderDate&#xa;, DueDate&#xa;, ShipDate&#xa;, &#x60;Status&#x60;&#xa;, SalesOrderNumber&#xa;, CustomerID&#xa;, ShipToAddressID&#xa;, BillToAddressID&#xa;, TB1.ShipMethodID&#xa;, TB2.OrderQty&#xa;, TB2.ProductID&#xa;, TB2.SalesOrderDetailID&#xa;, TB2.UnitPrice&#xa;, TB3.&#x60;Name&#x60; AS ShipmentMethod&#xa;, TB3.BulkyItemSurcharge&#xa;, TB3.CostPerShipment&#xa;, TB3.CostPerUnit&#xa;FROM &#x28;TB_SalesOrderHeader AS TB1 &#xa;  LEFT JOIN TB_SalesOrderDetail AS TB2 &#xa;    ON TB1.SalesOrderID&#x3d;TB2.SalesOrderID&#x29; &#xa;  LEFT JOIN TB_ShipMethod AS TB3 ON TB1.ShipMethodID&#x3d;TB3.ShipMethodID</sql>
+    <sql>SELECT&#xa;  TB1.SalesOrderID&#xa;, OrderDate&#xa;, DueDate&#xa;, ShipDate&#xa;, &#x60;Status&#x60; AS OrderStatus&#xa;, SalesOrderNumber&#xa;, CustomerID&#xa;, ShipToAddressID&#xa;, BillToAddressID&#xa;, TB1.ShipMethodID&#xa;, TB2.OrderQty AS OrderQuantity&#xa;, TB2.ProductID&#xa;, TB2.SalesOrderDetailID&#xa;, TB2.UnitPrice&#xa;, TB3.&#x60;Name&#x60; AS ShipmentMethod&#xa;, TB3.BulkyItemSurcharge&#xa;, TB3.CostPerShipment AS PerShipmentCost&#xa;, TB3.CostPerUnit AS PerItemCost&#xa;, TB4.CountryRegion AS Country&#xa;FROM &#x28;&#x28;TB_SalesOrderHeader AS TB1 &#xa;  LEFT JOIN TB_SalesOrderDetail AS TB2 &#xa;    ON TB1.SalesOrderID&#x3d;TB2.SalesOrderID&#x29; &#xa;  LEFT JOIN TB_ShipMethod AS TB3 &#xa;    ON TB1.ShipMethodID&#x3d;TB3.ShipMethodID&#x29;&#xa;  LEFT JOIN TB_Address AS TB4&#xa;    ON TB1.ShipToAddressID&#x3d;TB4.AddressID&#xa;  </sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -375,12 +794,36 @@
           <stream_name>ShipmentMethod</stream_name>
         </field>
         <field>
+          <column_name>UnitPrice</column_name>
+          <stream_name>UnitPrice</stream_name>
+        </field>
+        <field>
+          <column_name>Discount</column_name>
+          <stream_name>Discount</stream_name>
+        </field>
+        <field>
           <column_name>OrderQuantity</column_name>
-          <stream_name>OrderQty</stream_name>
+          <stream_name>OrderQuantity</stream_name>
+        </field>
+        <field>
+          <column_name>OrderLineTotal</column_name>
+          <stream_name>OrderLineTotal</stream_name>
+        </field>
+        <field>
+          <column_name>OrderLineProfit</column_name>
+          <stream_name>OrderLineProfit</stream_name>
+        </field>
+        <field>
+          <column_name>TaxAmount</column_name>
+          <stream_name>TaxAmount</stream_name>
+        </field>
+        <field>
+          <column_name>OrderLineFreightCost</column_name>
+          <stream_name>OrderLineFreightCost</stream_name>
         </field>
         <field>
           <column_name>OrderStatus</column_name>
-          <stream_name>Status</stream_name>
+          <stream_name>OrderStatus</stream_name>
         </field>
         <field>
           <column_name>OrderDate</column_name>
@@ -401,15 +844,15 @@
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>528</xloc>
-      <yloc>288</yloc>
-      <draw>N</draw>
+      <xloc>624</xloc>
+      <yloc>848</yloc>
+      <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Database lookup</name>
-    <type>DBLookup</type>
+    <name>Merge Join</name>
+    <type>MergeJoin</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -418,21 +861,516 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <connection/>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
+<join_type>INNER</join_type>
+<step1>Sort rows</step1>
+<step2>Sort rows 2</step2>
+    <keys_1>
+      <key>ProductID</key>
+    </keys_1>
+    <keys_2>
+      <key>ProductID</key>
+    </keys_2>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>304</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort rows</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>ProductID</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>192</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort rows 2</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>ProductID</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>416</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>DM_Product</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>BI_OLAP_36</connection>
+    <sql>SELECT&#xa;  ProductID&#xa;, StandardCost&#xa;, ProductTopCategory AS TopProductCategory&#xa;, IsBulkyItem&#xa;FROM DM_Product&#xa;</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>416</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>OrderLineFreightCost</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>BulkyItemSurchargeMasked</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>BulkyItemSurcharge</field_a>
+<field_b>IsBulkyItem</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>10</value_length>
+<value_precision>4</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>OrderLineFreightCost</field_name>
+<calc_type>COMBINATION_1</calc_type>
+<field_a>BulkyItemSurchargeMasked</field_a>
+<field_b>OrderQuantity</field_b>
+<field_c>PerItemCost</field_c>
+<value_type>Number</value_type>
+<value_length>10</value_length>
+<value_precision>4</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>208</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Init Discount</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <name>Discount</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>0.0</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>64</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>OrderLineTotal</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>Temp</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>OrderQuantity</field_a>
+<field_b>UnitPrice</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>OrderLineTotal</field_name>
+<calc_type>SUBTRACT</calc_type>
+<field_a>Temp</field_a>
+<field_b>Discount</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>352</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>OrderLineProfit</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>Temp</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>OrderQuantity</field_a>
+<field_b>StandardCost</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>OrderLineProfit</field_name>
+<calc_type>SUBTRACT</calc_type>
+<field_a>OrderLineTotal</field_a>
+<field_b>Temp</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>480</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>TaxAmount</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>TaxAmount</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>VatRate</field_a>
+<field_b>OrderLineTotal</field_b>
+<field_c/>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>704</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>CSV VAT file input</name>
+    <type>CsvInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <filename>&#x2f;home&#x2f;bernhard&#x2f;bi_2016&#x2f;2_wh&#x2f;task2&#x2f;ETL&#x2f;VatRate.csv</filename>
+    <filename_field/>
+    <rownum_field/>
+    <include_filename>N</include_filename>
+    <separator>&#x3b;</separator>
+    <enclosure/>
+    <header>Y</header>
+    <buffer_size>50000</buffer_size>
+    <lazy_conversion>Y</lazy_conversion>
+    <add_filename_result>N</add_filename_result>
+    <parallel>N</parallel>
+    <newline_possible>N</newline_possible>
+    <encoding/>
+    <fields>
+      <field>
+        <name>Country</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>VatRate</name>
+        <type>Number</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>704</xloc>
+      <yloc>624</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>lookup VAT</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <from>CSV VAT file input</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
     <lookup>
-      <schema/>
-      <table>lookup table</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>Country</name>
+        <field>Country</field>
+      </key>
+      <value>
+        <name>VatRate</name>
+        <rename>VatRate</rename>
+        <default/>
+        <type>Number</type>
+      </value>
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>80</xloc>
-      <yloc>224</yloc>
+      <xloc>592</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>ClothingLow</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>DiscountTemp</field_name>
+<formula_string>IF&#x28;AND&#x28;&#xa;    &#x5b;Discount&#x5d;&#x3d;0&#x3b;&#xa;    &#x5b;TopProductCategory&#x5d;&#x3d;&#x22;Clothing&#x22;&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3e;&#x3d;5&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3c;10&#x29;&#xa;&#x3b;0.05&#xa;&#x3b;&#x5b;Discount&#x5d;&#x29;</formula_string>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Discount</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>64</xloc>
+      <yloc>640</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>ClothingHigh</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>DiscountTemp</field_name>
+<formula_string>IF&#x28;AND&#x28;&#xa;    &#x5b;Discount&#x5d;&#x3d;0&#x3b;&#xa;    &#x5b;TopProductCategory&#x5d;&#x3d;&#x22;Clothing&#x22;&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3e;&#x3d;10&#x29;&#xa;&#x3b;0.1&#xa;&#x3b;&#x5b;Discount&#x5d;&#x29;</formula_string>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Discount</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>64</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>AccessoriesLow</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>DiscountTemp</field_name>
+<formula_string>IF&#x28;AND&#x28;&#xa;    &#x5b;Discount&#x5d;&#x3d;0&#x3b;&#xa;    &#x5b;TopProductCategory&#x5d;&#x3d;&#x22;Accessories&#x22;&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3e;&#x3d;5&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3c;10&#x29;&#xa;&#x3b;0.04&#xa;&#x3b;&#x5b;Discount&#x5d;&#x29;</formula_string>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Discount</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>192</xloc>
+      <yloc>640</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>AccessoriesHigh</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>DiscountTemp</field_name>
+<formula_string>IF&#x28;AND&#x28;&#xa;    &#x5b;Discount&#x5d;&#x3d;0&#x3b;&#xa;    &#x5b;TopProductCategory&#x5d;&#x3d;&#x22;Accessories&#x22;&#x3b;&#xa;    &#x5b;OrderQuantity&#x5d;&#x3e;&#x3d;10&#x29;&#xa;&#x3b;0.11&#xa;&#x3b;&#x5b;Discount&#x5d;&#x29;</formula_string>
+<value_type>Number</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Discount</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>192</xloc>
+      <yloc>720</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

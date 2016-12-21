@@ -1,0 +1,4 @@
+ShipmentMethod;PerShipmentCost;PerItemCost;BulkyItemSurcharge
+Standard;4;1;7
+Cargo (International);7;4;9
+Overseas Deluxe;30;6;10

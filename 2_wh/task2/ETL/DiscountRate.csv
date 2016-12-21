@@ -1,0 +1,8 @@
+TopProductCategory;MinimumOrderQuantity;DiscountRate
+Bikes;0;0.00
+Components;0;0.00
+Clothing;5;0.05
+Clothing;10;0.10
+Accessoires;5;0.04
+Accessoires;10;0.11
+
