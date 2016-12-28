@@ -1,0 +1,4 @@
+select revenue on 0,
+order({[product.productcategory].[topcategory].members},[product.productcategory].[topcategory].currentmember.Name,asc) on 1
+from [bike_sales]
+where [OrderDate.Days].[Year].[2014]

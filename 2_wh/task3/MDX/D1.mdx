@@ -1,0 +1,12 @@
+Select taxamount on 0,
+except(
+{[OrderDate.Days].[Year].[2014].children},
+{
+[OrderDate.Days].[2014].[12],
+[OrderDate.Days].[2014].[11],
+[OrderDate.Days].[2014].[10],
+[OrderDate.Days].[2014].[9],
+[OrderDate.Days].[2014].[8]
+}
+) on 1
+from [bike_sales]
