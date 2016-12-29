@@ -1,6 +1,6 @@
 with member [Measures].[RankQ] as
 	rank([Product.Name].[Name].currentmember,[Product.Name].[Name].currentmember.siblings,quantity)
-select {[Measures].[RankQ],quantity} on 0,
+select {[Measures].[RankQ]} on 0,
 generate(
 	{[Product.ProductCategory].[TopCategory].members},
 	crossjoin (
