@@ -1,0 +1,11 @@
+with member [Measures].[RankQ] as
+	rank([Product.Name].[Name].currentmember,[Product.Name].[Name].currentmember.siblings,quantity)
+select {[Measures].[RankQ]} on 0,
+generate(
+	{[Product.ProductCategory].[TopCategory].members},
+	crossjoin (
+		{[Product.ProductCategory].[TopCategory].currentmember},
+		topcount([Product.Name].children,3,(quantity))
+	)
+) on 1
+from [bike_sales]
