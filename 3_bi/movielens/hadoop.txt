@@ -1,0 +1,4 @@
+
+
+
+hadoop fs -put * /movielens
