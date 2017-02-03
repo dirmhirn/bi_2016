@@ -1,5 +1,15 @@
 SELECT title FROM (SELECT title, variance(rating) AS rating_var FROM movies left join ratings ON (movies.movieId = ratings.movieId) WHERE year(from_unixtime(ratings.timestamp)) = 2015 GROUP BY title ORDER BY rating_var DESC LIMIT 10) t;
 
+number of mappers = splits needed e.g. join and aggregation need extra split
+
+SELECT = single JOB
+ORER by extra job (muss nicht sein)
+
+
+SELECT might need no reducer
+
+speedup not to large, because of few map and reduce jobs
+
 hive> SELECT title FROM (SELECT title, variance(rating) AS rating_var FROM movies left join ratings ON (movies.movieId = ratings.movieId) WHERE year(from_unixtime(ratings.timestamp)) = 2015 GROUP BY title ORDER BY rating_var DESC LIMIT 10) t;
 Query ID = cloudera_20170203060909_61342c1e-f9ad-4a6b-86b6-bcfb652dc74e
 Total jobs = 3
