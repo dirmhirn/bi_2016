@@ -1,4 +1,16 @@
 
+-- run only once
+sed -i 1d genome-scores.csv
+sed -i 1d genome-tags.csv
+sed -i 1d movies.csv
+sed -i 1d ratings.csv
+sed -i 1d tags.csv
+sed -i 1d links.csv
 
 
-hadoop fs -put * /movielens
+-- copy data to hadoop
+hadoop fs -mkdir /movieLens
+hadoop fs -put * /movieLens
+
+-- show data loaded into hive
+hadoop fs -ls /user/hive/warehouse
