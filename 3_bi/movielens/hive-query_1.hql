@@ -1,4 +1,7 @@
-SELECT COUNT(*) FROM movies;
+SELECT COUNT(*)
+FROM movies;
+
+
 Query ID = cloudera_20170203032323_161d424a-f107-44ce-b29b-bdb18458e198
 Total jobs = 1
 Launching Job 1 out of 1
@@ -24,3 +27,46 @@ OK
 27278
 Time taken: 24.36 seconds, Fetched: 1 row(s)
 
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: movies
+            Statistics: Num rows: 1 Data size: 1397520 Basic stats: COMPLETE Column stats: COMPLETE
+            Select Operator
+              Statistics: Num rows: 1 Data size: 1397520 Basic stats: COMPLETE Column stats: COMPLETE
+              Group By Operator
+                aggregations: count()
+                mode: hash
+                outputColumnNames: _col0
+                Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: COMPLETE
+                Reduce Output Operator
+                  sort order: 
+                  Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: COMPLETE
+                  value expressions: _col0 (type: bigint)
+      Reduce Operator Tree:
+        Group By Operator
+          aggregations: count(VALUE._col0)
+          mode: mergepartial
+          outputColumnNames: _col0
+          Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: COMPLETE
+          File Output Operator
+            compressed: false
+            Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: COMPLETE
+            table:
+                input format: org.apache.hadoop.mapred.TextInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink

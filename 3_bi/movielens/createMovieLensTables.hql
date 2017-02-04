@@ -16,6 +16,11 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n' 
 STORED AS TEXTFILE;
 
+-- SERDE can only load data into fields of data type string.
+-- A CAST of fields loaded with SERDE is only possible with an extra view.
+-- see https://cwiki.apache.org/confluence/display/Hive/CSV+Serde
+-- For title and genre string is the right datatype. movieId should be int,
+-- but as an Id is only used for comparison, string is sufficient to.
 CREATE TABLE IF NOT EXISTS movies 
 (movieId string, title string, genres string) 
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' 

@@ -1,4 +1,10 @@
-SELECT tag_ranked FROM (SELECT tag AS tag_ranked, count(tag) as tag_count FROM tags GROUP BY tag ORDER BY tag_count DESC limit 10) r;
+SELECT tag_ranked
+FROM 
+  (SELECT tag AS tag_ranked,
+         count(tag) AS tag_count
+  FROM tags
+  GROUP BY  tag
+  ORDER BY  tag_count DESC limit 10) r;
 
 
 hive> SELECT tag_ranked FROM (SELECT tag AS tag_ranked, count(tag) as tag_count FROM tags GROUP BY tag ORDER BY tag_count DESC limit 10) r;
@@ -55,4 +61,79 @@ twist ending
 funny
 dystopia
 Time taken: 54.557 seconds, Fetched: 10 row(s)
+
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-2 depends on stages: Stage-1
+  Stage-0 depends on stages: Stage-2
+
+STAGE PLANS:
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: tags
+            Statistics: Num rows: 166039 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+            Select Operator
+              expressions: tag (type: string)
+              outputColumnNames: tag
+              Statistics: Num rows: 166039 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+              Group By Operator
+                aggregations: count(tag)
+                keys: tag (type: string)
+                mode: hash
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 166039 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+                Reduce Output Operator
+                  key expressions: _col0 (type: string)
+                  sort order: +
+                  Map-reduce partition columns: _col0 (type: string)
+                  Statistics: Num rows: 166039 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+                  value expressions: _col1 (type: bigint)
+      Reduce Operator Tree:
+        Group By Operator
+          aggregations: count(VALUE._col0)
+          keys: KEY._col0 (type: string)
+          mode: mergepartial
+          outputColumnNames: _col0, _col1
+          Statistics: Num rows: 83019 Data size: 8301932 Basic stats: COMPLETE Column stats: NONE
+          File Output Operator
+            compressed: false
+            table:
+                input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-2
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col1 (type: bigint)
+              sort order: -
+              Statistics: Num rows: 83019 Data size: 8301932 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col0 (type: string)
+      Reduce Operator Tree:
+        Select Operator
+          expressions: VALUE._col0 (type: string)
+          outputColumnNames: _col0
+          Statistics: Num rows: 83019 Data size: 8301932 Basic stats: COMPLETE Column stats: NONE
+          Limit
+            Number of rows: 10
+            Statistics: Num rows: 10 Data size: 1000 Basic stats: COMPLETE Column stats: NONE
+            File Output Operator
+              compressed: false
+              Statistics: Num rows: 10 Data size: 1000 Basic stats: COMPLETE Column stats: NONE
+              table:
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
 

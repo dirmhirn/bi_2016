@@ -1,5 +1,6 @@
-SELECT COUNT(*) FROM movies WHERE array_contains(split(genres,'\\|'), 'Film-Noir');
-
+SELECT COUNT(*)
+FROM movies
+WHERE array_contains(split(genres,'\\|'), 'Film-Noir');
 
 
 hive> SELECT COUNT(*) FROM movies WHERE array_contains(split(genres,'\\|'), 'Film-Noir');
@@ -28,3 +29,49 @@ OK
 330
 Time taken: 21.313 seconds, Fetched: 1 row(s)
 
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: movies
+            Statistics: Num rows: 13975 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+            Filter Operator
+              predicate: array_contains(split(genres, '\|'), 'Film-Noir') (type: boolean)
+              Statistics: Num rows: 6987 Data size: 698709 Basic stats: COMPLETE Column stats: NONE
+              Select Operator
+                Statistics: Num rows: 6987 Data size: 698709 Basic stats: COMPLETE Column stats: NONE
+                Group By Operator
+                  aggregations: count()
+                  mode: hash
+                  outputColumnNames: _col0
+                  Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    sort order: 
+                    Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: _col0 (type: bigint)
+      Reduce Operator Tree:
+        Group By Operator
+          aggregations: count(VALUE._col0)
+          mode: mergepartial
+          outputColumnNames: _col0
+          Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+          File Output Operator
+            compressed: false
+            Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+            table:
+                input format: org.apache.hadoop.mapred.TextInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink

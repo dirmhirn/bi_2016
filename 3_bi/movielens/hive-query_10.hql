@@ -1,4 +1,18 @@
-SELECT title FROM (SELECT movieId, g.tag, relevance FROM (SELECT tagId, tag FROM genome_tags WHERE tag = 'vienna') g LEFT JOIN genome_scores ON (genome_scores.tagId = g.tagId) ORDER BY relevance DESC) t LEFT JOIN movies ON (t.movieId = movies.movieId) LIMIT 15;
+SELECT title
+FROM 
+  (SELECT movieId,
+         g.tag,
+         relevance
+  FROM 
+    (SELECT tagId,
+         tag
+    FROM genome_tags
+    WHERE tag = 'vienna') g
+    LEFT JOIN genome_scores
+        ON (genome_scores.tagId = g.tagId)
+    ORDER BY  relevance DESC) t
+  LEFT JOIN movies
+    ON (t.movieId = movies.movieId) LIMIT 15;
 
 
 hive> SELECT title FROM (SELECT movieId, g.tag, relevance FROM (SELECT tagID, tag FROM genome_tags WHERE tag = 'vienna') g LEFT JOIN genome_scores ON (genome_scores.tagId = g.tagId) ORDER BY relevance DESC) t LEFT JOIN movies ON (t.movieId = movies.movieId) LIMIT 15;
@@ -96,4 +110,137 @@ Best Offer, The (Migliore offerta, La) (2013)
 Odd Man Out (1947)
 Stranger, The (1946)
 Time taken: 134.024 seconds, Fetched: 15 row(s)
+
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-8 is a root stage , consists of Stage-1
+  Stage-1
+  Stage-2 depends on stages: Stage-1
+  Stage-9 depends on stages: Stage-2
+  Stage-6 depends on stages: Stage-9
+  Stage-0 depends on stages: Stage-6
+
+STAGE PLANS:
+  Stage: Stage-8
+    Conditional Operator
+
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: genome_tags
+            Statistics: Num rows: 1809 Data size: 18092 Basic stats: COMPLETE Column stats: NONE
+            Filter Operator
+              predicate: (tag = 'vienna') (type: boolean)
+              Statistics: Num rows: 904 Data size: 9040 Basic stats: COMPLETE Column stats: NONE
+              Select Operator
+                expressions: tagid (type: int)
+                outputColumnNames: _col0
+                Statistics: Num rows: 904 Data size: 9040 Basic stats: COMPLETE Column stats: NONE
+                Reduce Output Operator
+                  key expressions: _col0 (type: int)
+                  sort order: +
+                  Map-reduce partition columns: _col0 (type: int)
+                  Statistics: Num rows: 904 Data size: 9040 Basic stats: COMPLETE Column stats: NONE
+          TableScan
+            alias: genome_scores
+            Statistics: Num rows: 2696202 Data size: 323544352 Basic stats: COMPLETE Column stats: NONE
+            Reduce Output Operator
+              key expressions: tagid (type: int)
+              sort order: +
+              Map-reduce partition columns: tagid (type: int)
+              Statistics: Num rows: 2696202 Data size: 323544352 Basic stats: COMPLETE Column stats: NONE
+              value expressions: movieid (type: int), relevance (type: decimal(25,24))
+      Reduce Operator Tree:
+        Join Operator
+          condition map:
+               Left Outer Join0 to 1
+          keys:
+            0 _col0 (type: int)
+            1 tagid (type: int)
+          outputColumnNames: _col2, _col4
+          Statistics: Num rows: 2965822 Data size: 355898794 Basic stats: COMPLETE Column stats: NONE
+          Select Operator
+            expressions: _col2 (type: int), _col4 (type: decimal(25,24))
+            outputColumnNames: _col0, _col2
+            Statistics: Num rows: 2965822 Data size: 355898794 Basic stats: COMPLETE Column stats: NONE
+            File Output Operator
+              compressed: false
+              table:
+                  input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                  serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-2
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col2 (type: decimal(25,24))
+              sort order: -
+              Statistics: Num rows: 2965822 Data size: 355898794 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col0 (type: int)
+      Reduce Operator Tree:
+        Select Operator
+          expressions: VALUE._col0 (type: int)
+          outputColumnNames: _col0
+          Statistics: Num rows: 2965822 Data size: 355898794 Basic stats: COMPLETE Column stats: NONE
+          File Output Operator
+            compressed: false
+            table:
+                input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-9
+    Map Reduce Local Work
+      Alias -> Map Local Tables:
+        movies 
+          Fetch Operator
+            limit: -1
+      Alias -> Map Local Operator Tree:
+        movies 
+          TableScan
+            alias: movies
+            Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+            HashTable Sink Operator
+              keys:
+                0 UDFToDouble(_col0) (type: double)
+                1 UDFToDouble(movieid) (type: double)
+
+  Stage: Stage-6
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Map Join Operator
+              condition map:
+                   Left Outer Join0 to 1
+              keys:
+                0 UDFToDouble(_col0) (type: double)
+                1 UDFToDouble(movieid) (type: double)
+              outputColumnNames: _col4
+              Statistics: Num rows: 3262404 Data size: 391488681 Basic stats: COMPLETE Column stats: NONE
+              Select Operator
+                expressions: _col4 (type: string)
+                outputColumnNames: _col0
+                Statistics: Num rows: 3262404 Data size: 391488681 Basic stats: COMPLETE Column stats: NONE
+                Limit
+                  Number of rows: 15
+                  Statistics: Num rows: 15 Data size: 1800 Basic stats: COMPLETE Column stats: NONE
+                  File Output Operator
+                    compressed: false
+                    Statistics: Num rows: 15 Data size: 1800 Basic stats: COMPLETE Column stats: NONE
+                    table:
+                        input format: org.apache.hadoop.mapred.TextInputFormat
+                        output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                        serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+      Local Work:
+        Map Reduce Local Work
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: 15
+      Processor Tree:
+        ListSink
 

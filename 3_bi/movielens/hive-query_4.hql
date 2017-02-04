@@ -1,4 +1,13 @@
-SELECT title FROM (SELECT title, variance(rating) AS rating_var FROM movies left join ratings ON (movies.movieId = ratings.movieId) WHERE year(from_unixtime(ratings.timestamp)) = 2015 GROUP BY title ORDER BY rating_var DESC LIMIT 10) t;
+SELECT title
+FROM 
+  (SELECT title,
+         variance(rating) AS rating_var
+  FROM movies
+  LEFT JOIN ratings
+      ON (movies.movieId = ratings.movieId)
+  WHERE year(from_unixtime(ratings.timestamp)) = 2015
+  GROUP BY  title
+  ORDER BY  rating_var DESC LIMIT 10) t;
 
 number of mappers = splits needed e.g. join and aggregation need extra split
 
@@ -9,6 +18,8 @@ ORER by extra job (muss nicht sein)
 SELECT might need no reducer
 
 speedup not to large, because of few map and reduce jobs
+
+hadoop blocksize is 128MB -> only one mapper for small files
 
 hive> SELECT title FROM (SELECT title, variance(rating) AS rating_var FROM movies left join ratings ON (movies.movieId = ratings.movieId) WHERE year(from_unixtime(ratings.timestamp)) = 2015 GROUP BY title ORDER BY rating_var DESC LIMIT 10) t;
 Query ID = cloudera_20170203060909_61342c1e-f9ad-4a6b-86b6-bcfb652dc74e
@@ -120,4 +131,122 @@ The War at Home (1979)
 Jesse Stone: Sea Change (2007)
 Cry_Wolf (a.k.a. Cry Wolf) (2005)
 Time taken: 180.97 seconds, Fetched: 10 row(s)
+
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-6 is a root stage , consists of Stage-1
+  Stage-1
+  Stage-2 depends on stages: Stage-1
+  Stage-3 depends on stages: Stage-2
+  Stage-0 depends on stages: Stage-3
+
+STAGE PLANS:
+  Stage: Stage-6
+    Conditional Operator
+
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: movies
+            Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+            Reduce Output Operator
+              key expressions: UDFToDouble(movieid) (type: double)
+              sort order: +
+              Map-reduce partition columns: UDFToDouble(movieid) (type: double)
+              Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+              value expressions: title (type: string)
+          TableScan
+            alias: ratings
+            Statistics: Num rows: 4445369 Data size: 533444384 Basic stats: COMPLETE Column stats: NONE
+            Reduce Output Operator
+              key expressions: UDFToDouble(movieid) (type: double)
+              sort order: +
+              Map-reduce partition columns: UDFToDouble(movieid) (type: double)
+              Statistics: Num rows: 4445369 Data size: 533444384 Basic stats: COMPLETE Column stats: NONE
+              value expressions: rating (type: decimal(2,1)), timestamp (type: int)
+      Reduce Operator Tree:
+        Join Operator
+          condition map:
+               Left Outer Join0 to 1
+          keys:
+            0 UDFToDouble(movieid) (type: double)
+            1 UDFToDouble(movieid) (type: double)
+          outputColumnNames: _col1, _col8, _col9
+          Statistics: Num rows: 4889906 Data size: 586788835 Basic stats: COMPLETE Column stats: NONE
+          Filter Operator
+            predicate: (year(from_unixtime(_col9)) = 2015) (type: boolean)
+            Statistics: Num rows: 2444953 Data size: 293394417 Basic stats: COMPLETE Column stats: NONE
+            Select Operator
+              expressions: _col1 (type: string), _col8 (type: decimal(2,1))
+              outputColumnNames: _col1, _col8
+              Statistics: Num rows: 2444953 Data size: 293394417 Basic stats: COMPLETE Column stats: NONE
+              Group By Operator
+                aggregations: variance(_col8)
+                keys: _col1 (type: string)
+                mode: hash
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 2444953 Data size: 293394417 Basic stats: COMPLETE Column stats: NONE
+                File Output Operator
+                  compressed: false
+                  table:
+                      input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                      output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                      serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-2
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col0 (type: string)
+              sort order: +
+              Map-reduce partition columns: _col0 (type: string)
+              Statistics: Num rows: 2444953 Data size: 293394417 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col1 (type: struct<count:bigint,sum:double,variance:double>)
+      Reduce Operator Tree:
+        Group By Operator
+          aggregations: variance(VALUE._col0)
+          keys: KEY._col0 (type: string)
+          mode: mergepartial
+          outputColumnNames: _col0, _col1
+          Statistics: Num rows: 1222476 Data size: 146697148 Basic stats: COMPLETE Column stats: NONE
+          File Output Operator
+            compressed: false
+            table:
+                input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-3
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col1 (type: double)
+              sort order: -
+              Statistics: Num rows: 1222476 Data size: 146697148 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col0 (type: string)
+      Reduce Operator Tree:
+        Select Operator
+          expressions: VALUE._col0 (type: string)
+          outputColumnNames: _col0
+          Statistics: Num rows: 1222476 Data size: 146697148 Basic stats: COMPLETE Column stats: NONE
+          Limit
+            Number of rows: 10
+            Statistics: Num rows: 10 Data size: 1200 Basic stats: COMPLETE Column stats: NONE
+            File Output Operator
+              compressed: false
+              Statistics: Num rows: 10 Data size: 1200 Basic stats: COMPLETE Column stats: NONE
+              table:
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
 

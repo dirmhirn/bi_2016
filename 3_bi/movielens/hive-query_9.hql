@@ -1,4 +1,16 @@
-SELECT tag FROM (SELECT tag, g.relevance FROM (SELECT tagID, relevance FROM genome_scores WHERE movieId = 1) g LEFT JOIN genome_tags ON (genome_tags.tagId = g.tagId) ORDER BY g.relevance DESC) f LIMIT 15;
+SELECT tag
+FROM 
+  (SELECT tag,
+         g.relevance
+  FROM 
+    (SELECT tagID,
+         relevance
+    FROM genome_scores
+    WHERE movieId = 1) g
+    LEFT JOIN genome_tags
+        ON (genome_tags.tagId = g.tagId)
+    ORDER BY  g.relevance DESC) f LIMIT 15;
+
 
 
 various querries different speeds:
@@ -147,4 +159,81 @@ great movie
 disney animated feature
 friendship
 Time taken: 31.49 seconds, Fetched: 15 row(s)
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-5 is a root stage
+  Stage-2 depends on stages: Stage-5
+  Stage-0 depends on stages: Stage-2
+
+STAGE PLANS:
+  Stage: Stage-5
+    Map Reduce Local Work
+      Alias -> Map Local Tables:
+        f:genome_tags 
+          Fetch Operator
+            limit: -1
+      Alias -> Map Local Operator Tree:
+        f:genome_tags 
+          TableScan
+            alias: genome_tags
+            Statistics: Num rows: 173 Data size: 18092 Basic stats: COMPLETE Column stats: NONE
+            HashTable Sink Operator
+              keys:
+                0 _col0 (type: int)
+                1 tagid (type: int)
+
+  Stage: Stage-2
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: genome_scores
+            Statistics: Num rows: 2696202 Data size: 323544352 Basic stats: COMPLETE Column stats: NONE
+            Filter Operator
+              predicate: (movieid = 1) (type: boolean)
+              Statistics: Num rows: 1348101 Data size: 161772176 Basic stats: COMPLETE Column stats: NONE
+              Select Operator
+                expressions: tagid (type: int), relevance (type: decimal(25,24))
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 1348101 Data size: 161772176 Basic stats: COMPLETE Column stats: NONE
+                Map Join Operator
+                  condition map:
+                       Left Outer Join0 to 1
+                  keys:
+                    0 _col0 (type: int)
+                    1 tagid (type: int)
+                  outputColumnNames: _col1, _col3
+                  Statistics: Num rows: 1482911 Data size: 177949397 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: _col3 (type: string), _col1 (type: decimal(25,24))
+                    outputColumnNames: _col0, _col1
+                    Statistics: Num rows: 1482911 Data size: 177949397 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: _col1 (type: decimal(25,24))
+                      sort order: -
+                      Statistics: Num rows: 1482911 Data size: 177949397 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: _col0 (type: string)
+      Local Work:
+        Map Reduce Local Work
+      Reduce Operator Tree:
+        Select Operator
+          expressions: VALUE._col0 (type: string)
+          outputColumnNames: _col0
+          Statistics: Num rows: 1482911 Data size: 177949397 Basic stats: COMPLETE Column stats: NONE
+          Limit
+            Number of rows: 15
+            Statistics: Num rows: 15 Data size: 1800 Basic stats: COMPLETE Column stats: NONE
+            File Output Operator
+              compressed: false
+              Statistics: Num rows: 15 Data size: 1800 Basic stats: COMPLETE Column stats: NONE
+              table:
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: 15
+      Processor Tree:
+        ListSink
 

@@ -1,4 +1,13 @@
-SELECT title FROM (SELECT title, count (tag) AS tag_count FROM movies left join tags ON (movies.movieId = tags.movieId) WHERE tag = 'mars' GROUP BY title ORDER BY tag_count DESC LIMIT 15) t;
+SELECT title
+FROM 
+  (SELECT title,
+         count (tag) AS tag_count
+  FROM movies
+  LEFT JOIN tags
+      ON (movies.movieId = tags.movieId)
+  WHERE tag = 'mars'
+  GROUP BY  title
+  ORDER BY  tag_count DESC LIMIT 15) t;
 
 
 hive> SELECT title FROM (SELECT title, count (tag) AS tag_count FROM movies left join tags ON (movies.movieId = tags.movieId) WHERE tag = 'mars' GROUP BY title ORDER BY tag_count DESC LIMIT 15) t;
@@ -77,3 +86,173 @@ Impostor (2002)
 Doom (2005)
 Time taken: 61.51 seconds, Fetched: 15 row(s)
 
+
+EXPLAIN:
+STAGE DEPENDENCIES:
+  Stage-6 is a root stage , consists of Stage-7, Stage-1
+  Stage-7 has a backup stage: Stage-1
+  Stage-5 depends on stages: Stage-7
+  Stage-2 depends on stages: Stage-1, Stage-5
+  Stage-3 depends on stages: Stage-2
+  Stage-1
+  Stage-0 depends on stages: Stage-3
+
+STAGE PLANS:
+  Stage: Stage-6
+    Conditional Operator
+
+  Stage: Stage-7
+    Map Reduce Local Work
+      Alias -> Map Local Tables:
+        t:tags 
+          Fetch Operator
+            limit: -1
+      Alias -> Map Local Operator Tree:
+        t:tags 
+          TableScan
+            alias: tags
+            Statistics: Num rows: 159653 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+            HashTable Sink Operator
+              keys:
+                0 UDFToDouble(movieid) (type: double)
+                1 UDFToDouble(movieid) (type: double)
+
+  Stage: Stage-5
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: movies
+            Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+            Map Join Operator
+              condition map:
+                   Left Outer Join0 to 1
+              keys:
+                0 UDFToDouble(movieid) (type: double)
+                1 UDFToDouble(movieid) (type: double)
+              outputColumnNames: _col1, _col8
+              Statistics: Num rows: 175618 Data size: 18264362 Basic stats: COMPLETE Column stats: NONE
+              Filter Operator
+                predicate: (_col8 = 'mars') (type: boolean)
+                Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col1 (type: string), 'mars' (type: string)
+                  outputColumnNames: _col1, _col8
+                  Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+                  Group By Operator
+                    aggregations: count(_col8)
+                    keys: _col1 (type: string)
+                    mode: hash
+                    outputColumnNames: _col0, _col1
+                    Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      table:
+                          input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                          serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+      Local Work:
+        Map Reduce Local Work
+
+  Stage: Stage-2
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col0 (type: string)
+              sort order: +
+              Map-reduce partition columns: _col0 (type: string)
+              Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col1 (type: bigint)
+      Reduce Operator Tree:
+        Group By Operator
+          aggregations: count(VALUE._col0)
+          keys: KEY._col0 (type: string)
+          mode: mergepartial
+          outputColumnNames: _col0, _col1
+          Statistics: Num rows: 43904 Data size: 4566038 Basic stats: COMPLETE Column stats: NONE
+          File Output Operator
+            compressed: false
+            table:
+                input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-3
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            Reduce Output Operator
+              key expressions: _col1 (type: bigint)
+              sort order: -
+              Statistics: Num rows: 43904 Data size: 4566038 Basic stats: COMPLETE Column stats: NONE
+              value expressions: _col0 (type: string)
+      Reduce Operator Tree:
+        Select Operator
+          expressions: VALUE._col0 (type: string)
+          outputColumnNames: _col0
+          Statistics: Num rows: 43904 Data size: 4566038 Basic stats: COMPLETE Column stats: NONE
+          Limit
+            Number of rows: 15
+            Statistics: Num rows: 15 Data size: 1560 Basic stats: COMPLETE Column stats: NONE
+            File Output Operator
+              compressed: false
+              Statistics: Num rows: 15 Data size: 1560 Basic stats: COMPLETE Column stats: NONE
+              table:
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-1
+    Map Reduce
+      Map Operator Tree:
+          TableScan
+            alias: movies
+            Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+            Reduce Output Operator
+              key expressions: UDFToDouble(movieid) (type: double)
+              sort order: +
+              Map-reduce partition columns: UDFToDouble(movieid) (type: double)
+              Statistics: Num rows: 6987 Data size: 1397520 Basic stats: COMPLETE Column stats: NONE
+              value expressions: title (type: string)
+          TableScan
+            alias: tags
+            Statistics: Num rows: 159653 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+            Reduce Output Operator
+              key expressions: UDFToDouble(movieid) (type: double)
+              sort order: +
+              Map-reduce partition columns: UDFToDouble(movieid) (type: double)
+              Statistics: Num rows: 159653 Data size: 16603966 Basic stats: COMPLETE Column stats: NONE
+              value expressions: tag (type: string)
+      Reduce Operator Tree:
+        Join Operator
+          condition map:
+               Left Outer Join0 to 1
+          keys:
+            0 UDFToDouble(movieid) (type: double)
+            1 UDFToDouble(movieid) (type: double)
+          outputColumnNames: _col1, _col8
+          Statistics: Num rows: 175618 Data size: 18264362 Basic stats: COMPLETE Column stats: NONE
+          Filter Operator
+            predicate: (_col8 = 'mars') (type: boolean)
+            Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+            Select Operator
+              expressions: _col1 (type: string), 'mars' (type: string)
+              outputColumnNames: _col1, _col8
+              Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+              Group By Operator
+                aggregations: count(_col8)
+                keys: _col1 (type: string)
+                mode: hash
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 87809 Data size: 9132181 Basic stats: COMPLETE Column stats: NONE
+                File Output Operator
+                  compressed: false
+                  table:
+                      input format: org.apache.hadoop.mapred.SequenceFileInputFormat
+                      output format: org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat
+                      serde: org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
