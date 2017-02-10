@@ -1,6 +1,11 @@
 package amazon.b_SentimentAmazon;
 
 import java.io.File;
+
+import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.JobCounter;
+import org.apache.hadoop.mapreduce.TaskCounter;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -14,6 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 // Wrappers for data types
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.log4j.BasicConfigurator;
 
 public class SentimentAmazonDriver extends Configured implements Tool {
 	//First arg = input, 2nd = output, 3rd = positive words, 4th = negative words
