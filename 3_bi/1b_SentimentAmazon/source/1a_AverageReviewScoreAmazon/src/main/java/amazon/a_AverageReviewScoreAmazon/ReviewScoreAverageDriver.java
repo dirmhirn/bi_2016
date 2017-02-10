@@ -18,16 +18,6 @@ public class ReviewScoreAverageDriver
     		System.out.println("Invalid Number of arguments!");
     		return;
     	}
-    	File in = new File(args[0]);
-    	if(!in.exists()) {
-    		System.out.println("Invalid input file!");
-    		return;
-    	}
-    	File out = new File(args[1]);
-    	if(out.exists()) {
-    		System.out.println("Output path already exists! Please choose an valid output path");
-    		return;
-    	}
     	
     	JobConf conf = new JobConf(ReviewScoreAverageDriver.class);
     	conf.setJobName("avgscore");
