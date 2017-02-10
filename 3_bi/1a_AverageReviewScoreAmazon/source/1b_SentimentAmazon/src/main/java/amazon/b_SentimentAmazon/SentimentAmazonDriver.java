@@ -22,26 +22,6 @@ public class SentimentAmazonDriver extends Configured implements Tool {
 			System.out.println("Invalid Parameters!");
 			return;
 		}
-		File in = new File(args[0]);
-		if(!in.exists()) {
-			System.out.println("Invalid Path!");
-			return;
-		}
-		File out = new File(args[1]);
-		if(out.exists()) {
-			System.out.println("Invalid Path!");
-			return;
-		}
-		File pos = new File(args[2]);
-		if(!pos.exists()) {
-			System.out.println("Invalid Path!");
-			return;
-		}
-		File neg = new File(args[3]);
-		if(!neg.exists()) {
-			System.out.println("Invalid Path!");
-			return;
-		}
 		
 		int res = ToolRunner.run(new SentimentAmazonDriver(), args);
 		System.exit(res);
